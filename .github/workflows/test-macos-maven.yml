@@ -1,0 +1,48 @@
+name: Test Maven macOS Installation (Multi-Version)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-macos-maven:
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        maven_version:
+          - 3.5.4
+          - 3.6.3
+          - 3.8.8
+          - 3.9.6
+          - 3.9.16
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Maven
+        run: |
+          chmod +x scripts/install-maven-mac.sh
+          ./scripts/install-maven-mac.sh ${{ matrix.maven_version }}
+
+      - name: Verify Maven ONLY (no build)
+        run: |
+          export MAVEN_HOME="$HOME/tools/apache-maven-${{ matrix.maven_version }}"
+          export PATH="$MAVEN_HOME/bin:$PATH"
+
+          echo "🔍 Checking Maven version"
+          mvn -v
+
+          echo "🔍 Checking Maven binary"
+          which mvn
+
+          echo "🔍 Checking MAVEN_HOME"
+          echo $MAVEN_HOME
