@@ -1,7 +1,6 @@
-name: Test Maven Installation Across Versions
+name: Test Maven Linux Installation (Multi-Version)
 
 on:
-  push:
   pull_request:
 
 jobs:
