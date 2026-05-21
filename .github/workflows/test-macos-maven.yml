@@ -1,7 +1,6 @@
 name: Test Maven macOS Installation (Multi-Version)
 
 on:
-  push:
   pull_request:
 
 jobs:
