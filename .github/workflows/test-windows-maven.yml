@@ -1,0 +1,46 @@
+name: Windows Maven Installation Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-windows-maven:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        maven_version:
+          - 3.5.4
+          - 3.6.3
+          - 3.8.8
+          - 3.9.6
+          - 3.9.16
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Run Maven installer (PowerShell)
+        shell: pwsh
+        run: |
+          ./scripts/install-maven.ps1 -MavenVersion "${{ matrix.maven_version }}"
+
+      - name: Verify Maven installation
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\Tools\apache-maven-${{ matrix.maven_version }}\bin;" + $env:PATH
+          mvn -v
+
+      - name: Run Maven test build (proof it works)
+        shell: pwsh
+        run: |
+          cd examples/hello-maven
+          mvn clean package
