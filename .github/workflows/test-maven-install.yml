@@ -29,7 +29,7 @@ jobs:
           java-version: "21"
 
       - name: Make install script executable
-        run: chmod +x .scripts/install-maven.sh
+        run: chmod +x ./scripts/install-maven.sh
 
       - name: Install Maven version ${{ matrix.maven_version }}
         run: |
@@ -37,7 +37,7 @@ jobs:
 
           MAVEN_VERSION=${{ matrix.maven_version }} \
           INSTALL_DIR="$HOME/tools" \
-          bash .scripts/install-maven.sh
+          bash ./scripts/install-maven.sh
 
       - name: Verify Maven installation
         run: |
