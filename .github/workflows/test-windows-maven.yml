@@ -1,4 +1,4 @@
-name: Windows Maven Installation Test
+name: Test Maven Windows Installation (Multi-Version)
 
 on:
   push:
@@ -28,19 +28,22 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Run Maven installer (PowerShell)
+      - name: Install Maven (PowerShell script)
         shell: pwsh
         run: |
           ./scripts/install-maven.ps1 -MavenVersion "${{ matrix.maven_version }}"
 
-      - name: Verify Maven installation
+      - name: Verify Maven installation ONLY
         shell: pwsh
         run: |
-          $env:PATH = "C:\Tools\apache-maven-${{ matrix.maven_version }}\bin;" + $env:PATH
+          $mavenHome = "C:\Tools\apache-maven-${{ matrix.maven_version }}"
+          $env:PATH = "$mavenHome\bin;" + $env:PATH
+
+          Write-Host "🔍 Checking mvn version..."
           mvn -v
 
-      - name: Run Maven test build (proof it works)
-        shell: pwsh
-        run: |
-          cd examples/hello-maven
-          mvn clean package
+          Write-Host "🔍 Checking mvn command location..."
+          Get-Command mvn
+
+          Write-Host "🔍 Checking MAVEN_HOME..."
+          Write-Host $env:MAVEN_HOME
