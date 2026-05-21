@@ -1,7 +1,6 @@
 name: Test Maven Windows Installation (Multi-Version)
 
 on:
-  push:
   pull_request:
 
 jobs:
