@@ -1,0 +1,1 @@
+# Verify mvn manual installations

@@ -1,0 +1,51 @@
+name: Test Maven Installation Across Versions
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-maven:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        maven_version:
+          - 3.5.4
+          - 3.6.3
+          - 3.8.8
+          - 3.9.6
+          - 3.9.16
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java (required for Maven)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Make install script executable
+        run: chmod +x ./install-maven.sh
+
+      - name: Install Maven version ${{ matrix.maven_version }}
+        run: |
+          echo "Installing Maven ${{ matrix.maven_version }}"
+
+          MAVEN_VERSION=${{ matrix.maven_version }} \
+          INSTALL_DIR="$HOME/tools" \
+          bash ./install-maven.sh
+
+      - name: Verify Maven installation
+        run: |
+          export MAVEN_HOME="$HOME/tools/apache-maven-${{ matrix.maven_version }}"
+          export PATH="$MAVEN_HOME/bin:$PATH"
+
+          echo "🔍 Checking Maven version"
+          mvn -v
+
+          echo "🔍 Running Maven help command"
+          mvn -q help:effective-settings
